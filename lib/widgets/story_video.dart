@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:video_player/video_player.dart';
 
-import '../utils.dart';
 import '../controller/story_controller.dart';
+import '../utils.dart';
 
 class VideoLoader {
   String url;
@@ -25,8 +25,8 @@ class VideoLoader {
       onComplete();
     }
 
-    final fileStream = DefaultCacheManager()
-        .getFileStream(this.url, headers: this.requestHeaders as Map<String, String>?);
+    final fileStream = DefaultCacheManager().getFileStream(this.url,
+        headers: this.requestHeaders as Map<String, String>?);
 
     fileStream.listen((fileResponse) {
       if (fileResponse is FileInfo) {
@@ -43,18 +43,22 @@ class VideoLoader {
 class StoryVideo extends StatefulWidget {
   final StoryController? storyController;
   final VideoLoader videoLoader;
+  final Color? backgroundColorOverride;
 
-  StoryVideo(this.videoLoader, {this.storyController, Key? key})
+  StoryVideo(this.videoLoader,
+      {this.storyController, this.backgroundColorOverride, Key? key})
       : super(key: key ?? UniqueKey());
 
   static StoryVideo url(String url,
       {StoryController? controller,
+      Color? backgroundColorOverride,
       Map<String, dynamic>? requestHeaders,
       Key? key}) {
     return StoryVideo(
       VideoLoader(url, requestHeaders: requestHeaders),
       storyController: controller,
       key: key,
+      backgroundColorOverride: backgroundColorOverride,
     );
   }
 
@@ -107,9 +111,12 @@ class StoryVideoState extends State<StoryVideo> {
     if (widget.videoLoader.state == LoadState.success &&
         playerController!.value.isInitialized) {
       return Center(
-        child: AspectRatio(
-          aspectRatio: playerController!.value.aspectRatio,
-          child: VideoPlayer(playerController!),
+        child: Container(
+          color: widget.backgroundColorOverride ?? Colors.black,
+          child: AspectRatio(
+            aspectRatio: playerController!.value.aspectRatio,
+            child: VideoPlayer(playerController!),
+          ),
         ),
       );
     }
@@ -120,7 +127,7 @@ class StoryVideoState extends State<StoryVideo> {
               width: 70,
               height: 70,
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                 strokeWidth: 3,
               ),
             ),

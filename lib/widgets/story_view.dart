@@ -31,14 +31,15 @@ class StoryItem {
   /// is because the next item to be displayed is taken by the last unshown
   /// story item.
   bool shown;
+  // Background Color
+  final Color? backgroundColorOverride;
 
   /// The page content
   final Widget view;
-  StoryItem(
-    this.view, {
-    required this.duration,
-    this.shown = false,
-  });
+  StoryItem(this.view,
+      {required this.duration,
+      this.shown = false,
+      this.backgroundColorOverride});
 
   /// Short hand to create text-only page.
   ///
@@ -225,39 +226,36 @@ class StoryItem {
     String? caption,
     bool shown = false,
     Map<String, dynamic>? requestHeaders,
+    Color? backgroundColorOverride,
   }) {
     return StoryItem(
-        Container(
-          key: key,
-          color: Colors.black,
-          child: Stack(
-            children: <Widget>[
-              StoryVideo.url(
-                url,
-                controller: controller,
-                requestHeaders: requestHeaders,
-              ),
-              SafeArea(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.only(bottom: 24),
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    color:
-                        caption != null ? Colors.black54 : Colors.transparent,
-                    child: caption != null
-                        ? Text(
-                            caption,
-                            style: TextStyle(fontSize: 15, color: Colors.white),
-                            textAlign: TextAlign.center,
-                          )
-                        : SizedBox(),
-                  ),
+        Stack(
+          children: <Widget>[
+            StoryVideo.url(
+              url,
+              controller: controller,
+              requestHeaders: requestHeaders,
+              backgroundColorOverride: backgroundColorOverride,
+            ),
+            SafeArea(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(bottom: 24),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  color: caption != null ? Colors.black54 : Colors.transparent,
+                  child: caption != null
+                      ? Text(
+                          caption,
+                          style: TextStyle(fontSize: 15, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        )
+                      : SizedBox(),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
         shown: shown,
         duration: duration ?? Duration(seconds: 10));
@@ -406,6 +404,8 @@ class StoryView extends StatefulWidget {
 
   // Indicator Color
   final Color indicatorColor;
+  // Background Color
+  final Color backgroundColor;
 
   StoryView({
     required this.storyItems,
@@ -417,6 +417,7 @@ class StoryView extends StatefulWidget {
     this.inline = false,
     this.onVerticalSwipeComplete,
     this.indicatorColor = Colors.white,
+    this.backgroundColor = Colors.black,
   });
 
   @override
@@ -617,7 +618,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: widget.backgroundColor,
       child: Stack(
         children: <Widget>[
           SafeArea(child: _currentView),
