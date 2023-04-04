@@ -110,9 +110,9 @@ class StoryVideoState extends State<StoryVideo> {
   Widget getContentView() {
     if (widget.videoLoader.state == LoadState.success &&
         playerController!.value.isInitialized) {
-      return Center(
-        child: Container(
-          color: widget.backgroundColorOverride ?? Colors.black,
+      return Container(
+        color: widget.backgroundColorOverride ?? Colors.black,
+        child: Center(
           child: AspectRatio(
             aspectRatio: playerController!.value.aspectRatio,
             child: VideoPlayer(playerController!),
